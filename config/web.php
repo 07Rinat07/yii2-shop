@@ -4,6 +4,7 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    'language' => 'ru-RU',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -41,15 +42,15 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
-        /*
         'urlManager' => [
+            // включаем поддержку SEF URL
             'enablePrettyUrl' => true,
+            // не добавлять в URL index.php
             'showScriptName' => false,
-            'rules' => [
-            ],
+            // правила преобразования адресов
+            'rules' => [],
         ],
-        */
+        /*.....*/
     ],
     'params' => $params,
 ];
