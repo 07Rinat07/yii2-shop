@@ -1,83 +1,170 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var string $content */
+/* @var $this \yii\web\View */
+/* @var $content string */
 
+use yii\helpers\Html;
+use yii\helpers\Url;
 use app\assets\AppAsset;
-use app\widgets\Alert;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+use yii\bootstrap\Modal;
 
 AppAsset::register($this);
-
-$this->registerCsrfMetaTags();
-$this->registerMetaTag(['charset' => Yii::$app->charset], 'charset');
-$this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1, shrink-to-fit=no']);
-$this->registerMetaTag(['name' => 'description', 'content' => $this->params['meta_description'] ?? '']);
-$this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
-$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 ?>
-<?php $this->beginPage() ?>
+<?php $this->beginPage(); ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language; ?>">
 <head>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
+    <meta charset="<?= Yii::$app->charset; ?>">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php $this->registerCsrfMetaTags(); ?>
+    <title><?= Html::encode($this->title); ?></title>
+    <?php $this->head(); ?>
 </head>
-<body class="d-flex flex-column h-100">
-<?php $this->beginBody() ?>
 
-<header id="header">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
-    ]);
-    NavBar::end();
-    ?>
+<body>
+<?php $this->beginBody(); ?>
+<header>
+
+    <div class="header-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <ul class="nav nav-pills">
+                        <li><a href="#"><i class="fa fa-phone"></i> +77051260410</a></li>
+                        <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <ul class="nav nav-pills pull-right">
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-middle">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="pull-left">
+                        <a href="<?= Url::home() ?>">
+                            <?=
+                            Html::img(
+                                '@web/images/home/logo.png',
+                                ['alt' => Yii::$app->params['shopName']]
+                            )
+                            ?>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <ul class="pull-right">
+                        <li><i class="fa fa-user"></i> <a href="#">Аккаунт</a></li>
+                        <li><i class="fa fa-star"></i> <a href="#">Избранное</a></li>
+                        <li><i class="fa fa-crosshairs"></i> <a href="#">Оформить</a></li>
+                        <li>
+                            <i class="fa fa-shopping-cart"></i>
+                            <a href="<?= Url::to(['basket/index']); ?>">Корзина</a>
+                        </li>
+                        <li><i class="fa fa-lock"></i> <a href="#">Войти</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div id="menu">
+                        <ul>
+                            <li>
+                                <a href="<?= Url::to(['catalog/index']); ?>">
+                                    Каталог
+                                </a>
+                            </li>
+                            <?php foreach ($this->context->pageMenu as $page): ?>
+                                <li>
+                                    <a href="<?= Url::to(['page/view', 'slug' => $page['slug']]); ?>">
+                                        <?= $page['name']; ?>
+                                    </a>
+                                    <?php if (isset($page['childs'])): ?>
+                                        <ul>
+                                        <?php foreach ($page['childs'] as $child): ?>
+                                            <li>
+                                                <a href="<?= Url::to(['page/view', 'slug' => $child['slug']]); ?>">
+                                                    <?= $child['name']; ?>
+                                                </a>
+                                            </li>
+                                        <?php endforeach; ?>
+                                        </ul>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <form method="post" action="<?= Url::to(['catalog/search']); ?>" class="pull-right">
+                        <?=
+                        Html::hiddenInput(
+                            Yii::$app->request->csrfParam,
+                            Yii::$app->request->csrfToken
+                        );
+                        ?>
+                        <div class="input-group">
+                            <input type="text" name="query" class="form-control" placeholder="Поиск по каталогу">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </header>
 
-<main id="main" class="flex-shrink-0" role="main">
-    <div class="container">
-        <?php if (!empty($this->params['breadcrumbs'])): ?>
-            <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
-        <?php endif ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
-</main>
+<?= $content ?>
 
-<footer id="footer" class="mt-auto py-3 bg-light">
+<footer>
     <div class="container">
-        <div class="row text-muted">
-            <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
-        </div>
+        Copyright © 2024 E-SHOPPER Inc. All rights reserved.
     </div>
 </footer>
 
-<?php $this->endBody() ?>
+<?php
+$checkout = Url::to(['order/checkout']);
+$footer =
+<<<FOOTER
+<button type="button" class="btn btn-default" data-dismiss="modal">
+    Продолжить покупки
+</button>
+<a href="$checkout" class="btn btn-warning">
+    Оформить заказ
+</a>
+FOOTER;
+Modal::begin([
+    'header' => '<h2>Корзина</h2>',
+    'id' => 'basket-modal',
+    'size'=>'modal-lg',
+    'footer' => $footer
+]);
+Modal::end();
+unset($checkout, $footer);
+?>
+
+<?php $this->endBody(); ?>
 </body>
 </html>
-<?php $this->endPage() ?>
+<?php $this->endPage(); ?>

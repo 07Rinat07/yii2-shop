@@ -1,37 +1,47 @@
 <?php
-
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
-    'language' => 'ru-RU',
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'ru-RU',
+    'defaultRoute' => 'page',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'admin' => [
+            'class' => 'app\modules\admin\Module',
+            'layout' => 'main',
+        ],
+    ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'V8ewkcoAAmLuSulrWuGhe-30g_d8zGxC',
+            // secret key in the following - this is required by cookie validation
+            'cookieValidationKey' => 'k50nZdARB5-qNB9NNuOUDrNemC0gSCnd',
+            'baseUrl' => ''
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
+            'defaultDuration' => 10
         ],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'errorAction' => 'app/error'
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
-            'viewPath' => '@app/mail',
-            // send all mails to a file by default.
+            'class' => 'yii\swiftmailer\Mailer',
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
             'useFileTransport' => true,
+            'htmlLayout' => 'layouts/html',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -42,15 +52,41 @@ $config = [
                 ],
             ],
         ],
+        'db' => $db,
         'urlManager' => [
-            // включаем поддержку SEF URL
             'enablePrettyUrl' => true,
-            // не добавлять в URL index.php
             'showScriptName' => false,
-            // правила преобразования адресов
-            'rules' => [],
+            'rules' => [
+                // раздел каталога: 2, 3, 4 страница списка товаров
+                'catalog/category/<id:\d+>/page/<page:\d+>' => 'catalog/category',
+                // раздел каталога: первая страница списка товаров
+                'catalog/category/<id:\d+>' => 'catalog/category',
+                // бренд каталога: 2, 3, 4 страница списка товаров
+                'catalog/brand/<id:\d+>/page/<page:\d+>' => 'catalog/brand',
+                // бренд каталога: первая страница списка товаров
+                'catalog/brand/<id:\d+>' => 'catalog/brand',
+                // страница отдельного товара каталога
+                'catalog/product/<id:\d+>' => 'catalog/product',
+                // правило для 2, 3, 4 страницы результатов поиска
+                'catalog/search/query/<query:.*?>/page/<page:\d+>' => 'catalog/search',
+                // правило для первой страницы результатов поиска
+                'catalog/search/query/<query:.*?>' => 'catalog/search',
+                // правило для первой страницы с пустым запросом
+                'catalog/search' => 'catalog/search',
+                // страница сайта
+                '/page/<slug:[-_0-9a-zA-Z]+>/' => 'page/view'
+            ],
         ],
-        /*.....*/
+    ],
+    'controllerMap' => [
+        'elfinder' => [
+            'class' => 'mihaildev\elfinder\PathController',
+            'access' => ['?'], // доступ для всех
+            'root' => [
+                'path' => 'images/pages', // директория внутри web
+                'name' => 'Изображения'
+            ],
+        ]
     ],
     'params' => $params,
 ];

@@ -10,3 +10,11 @@ require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 $config = require __DIR__ . '/../config/web.php';
 
 (new yii\web\Application($config))->run();
+
+function debug($data, $echo = true) {
+    $res = '<pre>'.print_r($data, true).'</pre>';
+    if (!$echo) {
+        return $res;
+    }
+    echo $res;
+}
